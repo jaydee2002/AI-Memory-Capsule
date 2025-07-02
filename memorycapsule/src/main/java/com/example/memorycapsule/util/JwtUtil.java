@@ -19,7 +19,9 @@ public class JwtUtil {
     }
 
     public String extractEmail(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        var email = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+        System.out.println("email from extractEmail: " + email);
+        return email;
     }
 
     public boolean validateToken(String token) {

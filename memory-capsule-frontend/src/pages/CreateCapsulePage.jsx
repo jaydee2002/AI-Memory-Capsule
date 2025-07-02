@@ -47,6 +47,7 @@ export default function CreateCapsulePage() {
       const response = await customAxios.post("/capsules", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
       console.log("Response:", response.data);

@@ -40,6 +40,8 @@ public class CapsuleController {
             fileUrl = fileService.uploadFile(file);
         }
 
+        System.out.println("Authenticated user: " + user);
+
         Capsule capsule = Capsule.builder()
                 .title(title)
                 .messageType(messageType)
@@ -55,6 +57,7 @@ public class CapsuleController {
 
     @GetMapping
     public List<Capsule> getCapsules(@AuthenticationPrincipal User user) {
+        System.out.println("Authenticated user: " + user);
         return capsuleService.getByUser(user);
     }
 

@@ -15,7 +15,10 @@ export default function DashboardPage() {
         .get("/capsules", {
           headers: { Authorization: `Bearer ${token}` },
         })
-        .then((res) => setCapsules(res.data));
+        .then((res) => {
+          setCapsules(res.data);
+          console.log("Fetched capsules:", res.data);
+        });
     }
   }, []);
 
@@ -36,8 +39,14 @@ export default function DashboardPage() {
         Create New Capsule
       </button>
       {capsules.map((c) => (
-        <div key={c.id} className="border p-4 mb-2 rounded shadow">
+        <div
+          key={c.id}
+          className={`border p-4 mb-2 rounded shadow ${
+            c.unlocked ? "border-green-500" : "border-gray-300"
+          }`}
+        >
           <h3 className="font-bold">{c.title}</h3>
+          <p>Status: {c.unlocked ? "Unlocked 🎉" : "Locked 🔒"}</p>
           <p>Type: {c.messageType}</p>
           <p>Unlock Date: {c.unlockDate}</p>
           {c.fileUrl && (
