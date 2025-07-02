@@ -1,0 +1,41 @@
+# === Java / Spring Boot ===
+/target/
+*.log
+*.jar
+*.war
+*.iml
+*.class
+/.idea/
+/.gradle/
+/build/
+/out/
+*.db
+*.h2.db
+
+# Local environment and secrets
+*.env
+.env.*
+application-secret.yml
+application-dev.yml
+application-prod.yml
+
+# === Node / React ===
+/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/build/
+/dist/
+.env.local
+.env.development
+.env.production
+.env.test
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+
+# === IDEs ===
+.vscode/
+.idea/
+*.swp
