@@ -2,6 +2,7 @@ package com.example.memorycapsule.controller;
 
 import com.example.memorycapsule.model.Capsule;
 import com.example.memorycapsule.model.User;
+import com.example.memorycapsule.service.AIService;
 import com.example.memorycapsule.service.CapsuleService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class CapsuleController {
     private final CapsuleService capsuleService;
     private final FileService fileService;
+    private final AIService aiService;
 
     @PostMapping
     public Capsule createCapsule(
@@ -35,12 +37,20 @@ public class CapsuleController {
             @RequestParam String unlockDate
     ) throws IOException {
         String fileUrl = null;
+        String aiSummary = null;
 
         if (file != null && !file.isEmpty()) {
             fileUrl = fileService.uploadFile(file);
         }
 
-        System.out.println("Authenticated user: " + user);
+        if (textContent != null && !textContent.isEmpty()) {
+            try {
+                aiSummary = aiService.generateReflection(textContent);
+            } catch (Exception e) {
+                // Log error and continue without AI summary
+                System.err.println("AI summary failed: " + e.getMessage());
+            }
+        }
 
         Capsule capsule = Capsule.builder()
                 .title(title)
@@ -49,11 +59,13 @@ public class CapsuleController {
                 .fileUrl(fileUrl)
                 .unlockDate(LocalDateTime.parse(unlockDate))
                 .isUnlocked(false)
+                .aiSummary(aiSummary)
                 .user(user)
                 .build();
 
         return capsuleService.save(capsule);
     }
+
 
     @GetMapping
     public List<Capsule> getCapsules(@AuthenticationPrincipal User user) {

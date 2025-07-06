@@ -49,6 +49,10 @@ export default function DashboardPage() {
           <p>Status: {c.unlocked ? "Unlocked 🎉" : "Locked 🔒"}</p>
           <p>Type: {c.messageType}</p>
           <p>Unlock Date: {c.unlockDate}</p>
+          {c.aiSummary && (
+            <p className="italic text-gray-600">Reflection: {c.aiSummary}</p>
+          )}
+
           {c.fileUrl && (
             <a
               href={c.fileUrl}
