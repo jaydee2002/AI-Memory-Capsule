@@ -4,6 +4,7 @@ import com.example.memorycapsule.model.Capsule;
 import com.example.memorycapsule.model.User;
 import com.example.memorycapsule.service.AIService;
 import com.example.memorycapsule.service.CapsuleService;
+import com.example.memorycapsule.service.HashUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class CapsuleController {
     ) throws IOException {
         String fileUrl = null;
         String aiSummary = null;
+        String blockchainHash = null;
 
         if (file != null && !file.isEmpty()) {
             fileUrl = fileService.uploadFile(file);
@@ -52,6 +54,15 @@ public class CapsuleController {
             }
         }
 
+        // Prepare data string for hashing
+        String dataToHash = title +
+                (textContent != null ? textContent : "") +
+                (fileUrl != null ? fileUrl : "") +
+                unlockDate;
+
+        // Compute hash
+        blockchainHash = HashUtil.computeSHA256(dataToHash);
+
         Capsule capsule = Capsule.builder()
                 .title(title)
                 .messageType(messageType)
@@ -60,6 +71,7 @@ public class CapsuleController {
                 .unlockDate(LocalDateTime.parse(unlockDate))
                 .isUnlocked(false)
                 .aiSummary(aiSummary)
+                .blockchainHash(blockchainHash)
                 .user(user)
                 .build();
 

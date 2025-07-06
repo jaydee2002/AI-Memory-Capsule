@@ -48,6 +48,7 @@ export default function DashboardPage() {
           <h3 className="font-bold">{c.title}</h3>
           <p>Status: {c.unlocked ? "Unlocked 🎉" : "Locked 🔒"}</p>
           <p>Type: {c.messageType}</p>
+          <p className="text-xs text-gray-500">Hash: {c.blockchainHash}</p>
           <p>Unlock Date: {c.unlockDate}</p>
           {c.aiSummary && (
             <p className="italic text-gray-600">Reflection: {c.aiSummary}</p>
