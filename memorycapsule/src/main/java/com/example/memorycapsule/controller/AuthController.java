@@ -40,7 +40,7 @@ public class AuthController {
             );
             System.out.println("Authentication successful for email: " + authRequest.getEmail());
             String token = jwtUtil.generateToken(authRequest.getEmail());
-            return ResponseEntity.ok(new AuthResponse(token));
+            return ResponseEntity.ok(new AuthResponse(token, authRequest.getEmail()));
         } catch (AuthenticationException e) {
             System.err.println("Authentication failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid email or password"));

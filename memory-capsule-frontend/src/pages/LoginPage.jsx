@@ -10,7 +10,9 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     const res = await axios.post("/auth/login", { email, password });
+    // Save token and email to localStorage
     localStorage.setItem("token", res.data.token);
+    localStorage.setItem("email", res.data.email);
     navigate("/");
   };
 

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class CapsuleService {
@@ -18,6 +19,11 @@ public class CapsuleService {
 
     public List<Capsule> getByUser(User user) {
         return capsuleRepository.findByUser(user);
+    }
+
+    public Capsule getByIdAndUser(Long id, User user) {
+        return capsuleRepository.findByIdAndUser(id, user)
+                .orElse(null);
     }
 
     public void delete(Long id) {
