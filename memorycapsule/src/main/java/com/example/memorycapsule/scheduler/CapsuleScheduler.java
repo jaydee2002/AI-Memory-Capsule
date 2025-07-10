@@ -23,6 +23,7 @@ public class CapsuleScheduler {
         System.out.println("unlockCapsules running...");
         List<Capsule> capsules = capsuleRepository.findAll();
         for (Capsule capsule : capsules) {
+            System.out.println(capsule.getTitle() +": "+ capsule.getUnlockDate());
             if (!capsule.isUnlocked() && capsule.getUnlockDate().isBefore(LocalDateTime.now())) {
                 capsule.setUnlocked(true);
                 capsuleRepository.save(capsule);
