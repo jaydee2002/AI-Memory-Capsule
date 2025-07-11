@@ -1,8 +1,8 @@
 package com.example.memorycapsule.controller;
 
 
-import com.example.memorycapsule.model.AuthRequest;
-import com.example.memorycapsule.model.AuthResponse;
+import com.example.memorycapsule.model.AuthRequestDTO;
+import com.example.memorycapsule.model.AuthResponseDTO;
 import com.example.memorycapsule.model.User;
 import com.example.memorycapsule.service.UserService;
 import com.example.memorycapsule.util.JwtUtil;
@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -32,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO authRequest) {
         System.out.println("Login attempt for email: " + authRequest.getEmail());
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -40,10 +39,10 @@ public class AuthController {
             );
             System.out.println("Authentication successful for email: " + authRequest.getEmail());
             String token = jwtUtil.generateToken(authRequest.getEmail());
-            return ResponseEntity.ok(new AuthResponse(token, authRequest.getEmail()));
+            return ResponseEntity.ok(new AuthResponseDTO(token, authRequest.getEmail()));
         } catch (AuthenticationException e) {
             System.err.println("Authentication failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Invalid email or password"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponseDTO("Invalid email or password"));
         }
     }
 }

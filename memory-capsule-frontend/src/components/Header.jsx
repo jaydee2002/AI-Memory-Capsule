@@ -29,8 +29,8 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-gradient-to-r from-indigo-600 to-purple-600 border-b border-indigo-800/30  py-4">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+    <header className="bg-gradient-to-r from-indigo-600 to-purple-600 border-b border-indigo-800/30  py-4 ">
+      <div className="max-w-6xl mx-auto  flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
           <a
