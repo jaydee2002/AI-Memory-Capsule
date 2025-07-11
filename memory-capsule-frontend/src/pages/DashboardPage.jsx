@@ -15,11 +15,30 @@ import {
 } from "lucide-react";
 import ClickSpark from "../components/ClickSpark.jsx";
 
+async function fetchFileUrl(fileName, token) {
+  const res = await fetch(
+    `http://localhost:8080/api/files/url?fileName=${fileName}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (res.ok) {
+    const url = await res.text();
+    return url;
+  } else {
+    throw new Error("Failed to get file URL");
+  }
+}
+
 export default function DashboardPage() {
   const [capsules, setCapsules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [fileUrls, setFileUrls] = useState({}); // Store pre-signed URLs
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -37,12 +56,48 @@ export default function DashboardPage() {
     }
   }, [navigate, token]);
 
+  // Fetch pre-signed URLs for capsules with fileUrl
+  useEffect(() => {
+    const fetchUrls = async () => {
+      const urlPromises = capsules
+        .filter((c) => c.fileUrl && !fileUrls[c.id]) // Only fetch for capsules without cached URLs
+        .map(async (c) => {
+          try {
+            const fileKey = c.fileUrl.replace(
+              "https://memory-capsule-bucket.s3.eu-north-1.amazonaws.com/",
+              ""
+            );
+            const url = await fetchFileUrl(fileKey, token);
+            return { id: c.id, url };
+          } catch (error) {
+            console.error(`Error fetching URL for capsule ${c.id}:`, error);
+            return { id: c.id, url: null };
+          }
+        });
+
+      const results = await Promise.all(urlPromises);
+      setFileUrls((prev) => ({
+        ...prev,
+        ...results.reduce((acc, { id, url }) => ({ ...acc, [id]: url }), {}),
+      }));
+    };
+
+    if (capsules.length > 0) {
+      fetchUrls();
+    }
+  }, [capsules, token, fileUrls]);
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/capsules/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCapsules(capsules.filter((c) => c.id !== id));
+      setFileUrls((prev) => {
+        const newUrls = { ...prev };
+        delete newUrls[id]; // Remove URL for deleted capsule
+        return newUrls;
+      });
     } catch (error) {
       console.error("Error deleting capsule:", error);
     }
@@ -111,7 +166,7 @@ export default function DashboardPage() {
               {capsules.map((c) => (
                 <div
                   key={c.id}
-                  className="bg-white p-6 rounded-2xl border border-gray-200   transition-all duration-100 transform hover:-translate-y-1 relative"
+                  className="bg-white p-6 rounded-2xl border border-gray-200 transition-all duration-100 transform hover:-translate-y-1 relative"
                 >
                   <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
                     {c.title}
@@ -182,9 +237,9 @@ export default function DashboardPage() {
                     )}
                   </div>
 
-                  {c.fileUrl && (
+                  {c.fileUrl && fileUrls[c.id] && (
                     <a
-                      href={c.fileUrl}
+                      href={fileUrls[c.id]}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 text-sm font-medium mb-4 transition-colors"
